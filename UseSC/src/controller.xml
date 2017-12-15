@@ -1,0 +1,22 @@
+<sc-configuration>
+
+    <interceptor name="log" class="sc.water.ustc.interceptor.LogInterceptor" predo="preAction" afterdo="afterAction">
+    </interceptor>
+    <interceptor name="test" class="sc.water.ustc.interceptor.TestInterceptor" predo="preAction" afterdo="afterAction">
+    </interceptor>
+
+    <controller>
+        <action name="login" class="sc.water.ustc.action.LoginAction" method="handleLogin">
+            <interceptor-ref name="log"/>
+            <interceptor-ref name="test"/>
+            <result name="success" type="forward" value="/pages/Success.jsp"/>
+            <result name="failure" type="redirect" value="/UseSc/pages/Failure.jsp"/>
+
+        </action>
+        <action name="register" class="sc.water.ustc.action.RegisterAction" method="handleRegister">
+            <interceptor-ref name="log"/>
+            <result name="success" type="forward" value="/pages/Success.jsp"/>
+        </action>
+    </controller>
+
+</sc-configuration>
