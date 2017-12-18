@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class LogInterceptor implements InterceptorInterface{
+public class LogInterceptor implements InterceptorInterface {
 
     Document document;
     Element log;
@@ -28,13 +28,11 @@ public class LogInterceptor implements InterceptorInterface{
         System.out.println("----------LogInterceptor preAction");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         String SysTime = df.format(new Date()); //获取当前系统时间,即为访问开始时间
-        //测试打印System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
 
         if (!file.exists()) {       //如果该日志文件不存在则创建该文件
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -54,13 +52,9 @@ public class LogInterceptor implements InterceptorInterface{
             Element stime = document.createElement("s-time");
             stime.setTextContent(SysTime);
             actionElement.appendChild(stime);
-
-
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -97,8 +91,5 @@ public class LogInterceptor implements InterceptorInterface{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
-
     }
 }

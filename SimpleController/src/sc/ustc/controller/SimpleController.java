@@ -1,6 +1,6 @@
 package sc.ustc.controller;
 
-import sc.ustc.Proxy.ActionProxy;
+import sc.ustc.Proxy.ExecutorProxy;
 import sc.ustc.impl.ExecutorInterface;
 import sc.ustc.model.Action;
 import sc.ustc.model.Interceptor;
@@ -40,7 +40,6 @@ public class SimpleController extends HttpServlet {
 
         // 通过工具类获取配置文件解析结果
         XmlResolveHelper helper = SCUtil.getXmlResolveHelper();
-
         if (helper != null) {
             actionList = helper.getActionList();
             interceptorList = helper.getInterceptorList();
@@ -74,7 +73,7 @@ public class SimpleController extends HttpServlet {
 //                    Method method = actionClass.getMethod(action.getMethod());
 //                    resultStr = (String) method.invoke(object);
 //
-//                    ActionProxy actionProxy = new ActionProxy();
+//                    ExecutorProxy actionProxy = new ExecutorProxy();
 //                    ExecutorInterface ai = (ExecutorInterface) actionProxy.getProxy(object,actionClass);
 //                    ai.execute();
 //
@@ -85,9 +84,9 @@ public class SimpleController extends HttpServlet {
                 // 遍历action对应的结果列表，寻找到对应的result并执行
                 try {
                     // 设置代理，来执行interceptor以及action
-                    ActionProxy actionProxy = new ActionProxy();
+                    ExecutorProxy executorProxy = new ExecutorProxy();
                     Executor executor = new Executor();
-                    ExecutorInterface ai = (ExecutorInterface) actionProxy.getProxy(executor);
+                    ExecutorInterface ai = (ExecutorInterface) executorProxy.getProxy(executor);
                     resultStr = (String) ai.execute(action, refInterceptorList, parameterMap);
                 } catch (Exception e) {
                     e.printStackTrace();

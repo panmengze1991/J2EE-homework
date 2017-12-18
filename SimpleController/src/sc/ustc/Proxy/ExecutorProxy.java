@@ -5,7 +5,7 @@ import sc.ustc.service.Executor;
 
 import java.lang.reflect.Proxy;
 
-public class ActionProxy {
+public class ExecutorProxy {
     public Object getProxy(Object object) {
         ExecutorHandler executorHandler = new ExecutorHandler();
         executorHandler.setObject(object);
