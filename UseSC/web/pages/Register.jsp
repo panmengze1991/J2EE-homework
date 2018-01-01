@@ -2,9 +2,9 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
+<header>
     <title>Welcome</title>
-</head>
+</header>
 <body>
 <form action="register.sc" method="post">
     <input type="text" name="userName" placeholder="请输入用户名"/>

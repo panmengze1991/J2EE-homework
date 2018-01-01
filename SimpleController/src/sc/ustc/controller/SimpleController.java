@@ -6,9 +6,11 @@ import sc.ustc.model.Action;
 import sc.ustc.model.Interceptor;
 import sc.ustc.model.Result;
 import sc.ustc.service.Executor;
+import sc.ustc.utils.ConfigResolveHelper;
 import sc.ustc.utils.SCUtil;
-import sc.ustc.utils.XmlResolveHelper;
+import sc.ustc.utils.ViewResolveHelper;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +26,8 @@ public class SimpleController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Action> actionList = null;
         List<Interceptor> interceptorList = null;
-
+        ServletContext servletContext = req.getSession().getServletContext();
+        System.out.println("开始");
 
         resp.setContentType("text/html;charset=utf-8");
 
@@ -34,52 +37,27 @@ public class SimpleController extends HttpServlet {
         String resultStr = "";
 
         // action查找状态
-        boolean findSuccess = false;
+        boolean findAction = false;
+        // result查找状态
+        boolean findResult = false;
+        // 查找不到action或result的页面提示语句
+        String errorMsg;
+
         // 获取参数map
         Map<String, String[]> parameterMap = req.getParameterMap();
 
         // 通过工具类获取配置文件解析结果
-        XmlResolveHelper helper = SCUtil.getXmlResolveHelper();
-        if (helper != null) {
-            actionList = helper.getActionList();
-            interceptorList = helper.getInterceptorList();
-        }
-        if (actionList == null) {
-            return;
-        }
+        ConfigResolveHelper helper = SCUtil.getXmlResolveHelper(new ConfigResolveHelper(),
+                "/WEB-INF/classes/controller.xml", servletContext);
+        actionList = helper.getActionList();
+        interceptorList = helper.getInterceptorList();
 
         for (Action action : actionList) {
             if (action.getName().equals(actionStr)) {
+
                 // find action & dispatch
-                findSuccess = true;
+                findAction = true;
                 List<Interceptor> refInterceptorList = SCUtil.getRefInterceptorList(action, interceptorList);
-//                try {
-//                    // 通过反射获取类和对象
-//                    Class actionClass = Class.forName(action.getClassPath());
-//                    Object object = actionClass.newInstance();
-//
-//                    // 通过反射遍历设置对象属性
-//                    Field[] fields = actionClass.getDeclaredFields();
-//                    for (Field field : fields) {
-//                        field.setAccessible(true);
-//                        for (String key : parameterMap.keySet()) {
-//                            if (key.equals(field.getName())) {
-//                                field.set(object, (parameterMap.get(key))[0]);
-//                            }
-//                        }
-//                    }
-//
-//                    // 通过反射调用方法
-//                    Method method = actionClass.getMethod(action.getMethod());
-//                    resultStr = (String) method.invoke(object);
-//
-//                    ExecutorProxy actionProxy = new ExecutorProxy();
-//                    ExecutorInterface ai = (ExecutorInterface) actionProxy.getProxy(object,actionClass);
-//                    ai.execute();
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
 
                 // 遍历action对应的结果列表，寻找到对应的result并执行
                 try {
@@ -91,36 +69,43 @@ public class SimpleController extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 for (Result result : action.getResultList()) {
                     if (result.getName().equals(resultStr)) {
+                        findResult = true;
                         if ("forward".equals(result.getType())) {
-                            // 使用RequestDispatcher进行页面跳转
-                            req.getRequestDispatcher(result.getValue()).forward(req, resp);
+                            // 如果是forward
+                            if (result.getValue().endsWith("_view.xml")) {
+                                // result结尾是需要解析的xml时，打印对应的html
+                                String html = SCUtil.getXmlResolveHelper(new ViewResolveHelper(), result.getValue(),
+                                        servletContext).getView().getHtml();
+                                System.out.println(html);
+                                PrintWriter out = resp.getWriter();
+                                out.println(html);
+                            } else {
+                                // 使用RequestDispatcher进行页面跳转
+                                req.getRequestDispatcher(result.getValue()).forward(req, resp);
+                            }
                         } else if ("redirect".equals(result.getType())) {
                             // 使用Redirect进行页面跳转
                             resp.sendRedirect(result.getValue());
                         }
-                    } else {
-                        PrintWriter out = resp.getWriter();
-                        out.println("<html>"
-                                + "<head><title>COS</title></head>"
-                                + "<body>" + "没有请求的资源。" + "</body>"
-                                + "</html>");
                     }
                 }
-
-                System.out.println("SC处理完成");
             }
         }
 
-        // 如果没有查找到action，返回失败页面。
-        if (!findSuccess) {
+        //  如果没有查找到action，返回失败页面。
+        if (!findAction || !findResult) {
+            errorMsg = findAction ? "没有请求的资源。" : "不可识别的 action 请求。";
             PrintWriter out = resp.getWriter();
             out.println("<html>"
                     + "<head><title>COS</title></head>"
-                    + "<body>" + "不可识别的 action 请求。" + "</body>"
+                    + "<body>" + errorMsg + "</body>"
                     + "</html>");
         }
+
+        System.out.println("SC处理完成");
     }
 
     @Override

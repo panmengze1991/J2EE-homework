@@ -61,7 +61,7 @@ public class ExecutorHandler implements InvocationHandler {
             // action
             Method actionMethod = actionClass.getMethod(action.getMethod());
             resultStr = (String) actionMethod.invoke(actionObject);
-            System.out.println("do action: resultStr= " + resultStr);
+            System.out.println("do action: resultStr1111111111111111= " + resultStr);
 
             // interceptor after
             while (!interceptorStack.empty()){

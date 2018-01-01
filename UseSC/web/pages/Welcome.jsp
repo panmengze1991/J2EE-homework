@@ -2,9 +2,9 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
+<header>
     <title>Welcome</title>
-</head>
+</header>
 <body>
 <h2>欢迎使用COS!</h2>
 

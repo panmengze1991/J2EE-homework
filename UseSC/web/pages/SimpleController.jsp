@@ -7,9 +7,9 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
+<header>
     <title>SimpleController</title>
-</head>
+</header>
 <body>
 欢迎使用SimpleController
 </body>

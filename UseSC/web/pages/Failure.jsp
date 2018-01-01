@@ -2,9 +2,9 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
+<header>
     <title>COS</title>
-</head>
+</header>
 <body>
 <h2>请求失败!</h2>
 
