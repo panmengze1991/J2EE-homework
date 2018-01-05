@@ -11,7 +11,7 @@
         <action name="login" class="sc.water.ustc.action.LoginAction" method="handleLogin">
             <interceptor-ref name="log"/>
             <interceptor-ref name="test"/>
-            <!--<result name="success" type="forward" value="/pages/Success.jsp"/>-->
+            <!--<result name="success" column="forward" value="/pages/Success.jsp"/>-->
             <result name="success" type="forward" value="/pages/success_view.xml"/>
             <result name="failure" type="redirect" value="/UseSc/pages/Failure.jsp"/>
             <result name="login_failure" type="redirect" value="/UseSc/pages/LoginFailure.jsp"/>

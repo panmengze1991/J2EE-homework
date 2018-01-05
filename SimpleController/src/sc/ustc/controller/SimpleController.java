@@ -1,12 +1,13 @@
 package sc.ustc.controller;
 
 import sc.ustc.Proxy.ExecutorProxy;
+import sc.ustc.dao.Configuration;
 import sc.ustc.impl.ExecutorInterface;
 import sc.ustc.model.Action;
 import sc.ustc.model.Interceptor;
 import sc.ustc.model.Result;
 import sc.ustc.service.Executor;
-import sc.ustc.utils.ConfigResolveHelper;
+import sc.ustc.utils.ControllerResolveHelper;
 import sc.ustc.utils.SCUtil;
 import sc.ustc.utils.ViewResolveHelper;
 
@@ -31,6 +32,14 @@ public class SimpleController extends HttpServlet {
 
         resp.setContentType("text/html;charset=utf-8");
 
+//        ConfigResolveHelper configResolveHelper = SCUtil.getXmlResolveHelper(new ConfigResolveHelper(),"WEB-INF/classes/or_mapping" +
+//                ".xml",servletContext);
+//        JDBCClass jdbcClass = configResolveHelper.getJdbcClass();
+//        JDBCConfig jdbcConfig = configResolveHelper.getJdbcConfig();
+
+        Configuration configuration = new Configuration();
+        configuration.config(servletContext);
+
         // 解析请求的URL，并拆分出action的名称
         String url = req.getRequestURL().toString();
         String actionStr = url.substring(url.lastIndexOf('/') + 1, url.length() - 3);
@@ -47,7 +56,7 @@ public class SimpleController extends HttpServlet {
         Map<String, String[]> parameterMap = req.getParameterMap();
 
         // 通过工具类获取配置文件解析结果
-        ConfigResolveHelper helper = SCUtil.getXmlResolveHelper(new ConfigResolveHelper(),
+        ControllerResolveHelper helper = SCUtil.getXmlResolveHelper(new ControllerResolveHelper(),
                 "/WEB-INF/classes/controller.xml", servletContext);
         actionList = helper.getActionList();
         interceptorList = helper.getInterceptorList();
